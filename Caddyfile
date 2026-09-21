@@ -20,23 +20,35 @@ talktotps.com, www.talktotps.com {
 }
 
 # ── Battlestocks ──────────────────────────────────────────────────────────────
+# Redeploy with deploy/docker-compose.prod.yml to move from
+# 0.0.0.0:8080 → 127.0.0.1:8081 (loopback only).
+# WebSocket (STOMP) proxied natively by Caddy.
+
 battlestocks.nesiama.com {
     encode zstd gzip
-    header { -Server }
+    header {
+        -Server
+    }
     reverse_proxy host.docker.internal:8081
 }
 
 # ── Deskwars ──────────────────────────────────────────────────────────────────
+
 deskwars.nesiama.com {
     encode zstd gzip
-    header { -Server }
+    header {
+        -Server
+    }
     reverse_proxy host.docker.internal:8082
 }
 
 # ── Grafana ───────────────────────────────────────────────────────────────────
+
 grafana.nesiama.com {
     encode zstd gzip
-    header { -Server }
+    header {
+        -Server
+    }
     reverse_proxy host.docker.internal:3000
 }
 
