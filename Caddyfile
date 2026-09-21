@@ -1,0 +1,77 @@
+{
+    email gbonzy@gmail.com
+}
+
+# ── Knowledge project ─────────────────────────────────────────────────────────
+# knowledge_caddy handles all internal routing for talktotps.com (frontend/API).
+# We move it from 0.0.0.0:80 to 127.0.0.1:8088 and proxy here.
+# One change in /opt/knowledge/docker-compose.yml:
+#   ports: ["127.0.0.1:8088:80"]   ← was "0.0.0.0:80:80"
+
+talktotps.com, www.talktotps.com {
+    encode zstd gzip
+    header {
+        Strict-Transport-Security "max-age=31536000; includeSubDomains"
+        X-Content-Type-Options    "nosniff"
+        Referrer-Policy           "strict-origin-when-cross-origin"
+        -Server
+    }
+    reverse_proxy host.docker.internal:8088
+}
+
+# ── Battlestocks ──────────────────────────────────────────────────────────────
+battlestocks.nesiama.com {
+    encode zstd gzip
+    header { -Server }
+    reverse_proxy host.docker.internal:8081
+}
+
+# ── Deskwars ──────────────────────────────────────────────────────────────────
+deskwars.nesiama.com {
+    encode zstd gzip
+    header { -Server }
+    reverse_proxy host.docker.internal:8082
+}
+
+# ── Grafana ───────────────────────────────────────────────────────────────────
+grafana.nesiama.com {
+    encode zstd gzip
+    header { -Server }
+    reverse_proxy host.docker.internal:3000
+}
+
+# ── Pantry Agent ──────────────────────────────────────────────────────────────
+# Already on 127.0.0.1:8091. No changes needed there.
+
+pantry.nesiama.com {
+    encode zstd gzip
+
+    header {
+        Strict-Transport-Security "max-age=31536000; includeSubDomains"
+        X-Frame-Options           "DENY"
+        X-Content-Type-Options    "nosniff"
+        Referrer-Policy           "strict-origin-when-cross-origin"
+        -Server
+    }
+
+    rate_limit {
+        zone webhook_per_ip {
+            match {
+                path /webhook/*
+            }
+            key    {remote_host}
+            events 60
+            window 1m
+        }
+        zone setup_link_per_ip {
+            match {
+                path /api/profile/setup-link
+            }
+            key    {remote_host}
+            events 5
+            window 1m
+        }
+    }
+
+    reverse_proxy host.docker.internal:8091
+}
