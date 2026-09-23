@@ -25,6 +25,7 @@ talktotps.com, www.talktotps.com {
 # WebSocket (STOMP) proxied natively by Caddy.
 
 battlestocks.nesiama.com {
+    tls internal
     encode zstd gzip
     header {
         -Server
@@ -35,6 +36,7 @@ battlestocks.nesiama.com {
 # ── Deskwars ──────────────────────────────────────────────────────────────────
 
 deskwars.nesiama.com {
+    tls internal
     encode zstd gzip
     header {
         -Server
@@ -45,6 +47,7 @@ deskwars.nesiama.com {
 # ── Grafana ───────────────────────────────────────────────────────────────────
 
 grafana.nesiama.com {
+    tls internal
     encode zstd gzip
     header {
         -Server
@@ -56,6 +59,7 @@ grafana.nesiama.com {
 # Already on 127.0.0.1:8091. No changes needed there.
 
 pantry.nesiama.com {
+    tls internal
     encode zstd gzip
 
     header {
@@ -86,4 +90,14 @@ pantry.nesiama.com {
     }
 
     reverse_proxy host.docker.internal:8091
+}
+
+# ── Sudoku ─────────────────────────────────────────────────────────────────────
+sudoku.nesiama.com {
+    encode zstd gzip
+    tls internal
+    header {
+        -Server
+    }
+    reverse_proxy host.docker.internal:8083
 }
