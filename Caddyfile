@@ -101,3 +101,16 @@ sudoku.nesiama.com {
     }
     reverse_proxy host.docker.internal:8083
 }
+
+# ── Nesiama (root site) ────────────────────────────────────────────────────
+nesiama.com, www.nesiama.com {
+    tls internal
+    encode zstd gzip
+    header {
+        Strict-Transport-Security "max-age=31536000; includeSubDomains"
+        X-Content-Type-Options    "nosniff"
+        Referrer-Policy           "strict-origin-when-cross-origin"
+        -Server
+    }
+    reverse_proxy host.docker.internal:8092
+}
